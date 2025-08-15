@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Calculadora Shopee</title>
+<style>
+  :root { --bg:#0f172a; --card:#111827; --muted:#6b7280; --line:#1f2937; --good:#10b981; --accent:#3b82f6; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;
+       background:linear-gradient(180deg,#0b1220 0%,#0f172a 100%);color:#e5e7eb;display:flex;min-height:100vh}
+  .wrap{max-width:760px;margin:auto;padding:24px;width:100%}
+  h1{margin:0 0 14px;font-size:22px;font-weight:700}
+  p.hint{margin:0 0 22px;color:var(--muted);font-size:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+  .grid{display:grid;grid-template-columns:1fr 220px;gap:10px;padding:16px}
+  .row{display:contents}
+  .lbl{padding:10px 12px;border-top:1px solid var(--line);display:flex;align-items:center}
+  .ctl{padding:10px 12px;border-top:1px solid var(--line)}
+  .grid .lbl:first-child,.grid .ctl:first-child{border-top:none}
+  input[type="number"]{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #374151;background:#0b1220;color:#e5e7eb}
+  input[type="checkbox"]{transform:scale(1.15)}
+  .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#0b1220;border:1px solid #374151;font-size:12px;color:#9ca3af;margin-left:8px}
+  .result{background:#0b1220;border-top:1px solid var(--line);padding:16px}
+  .result h3{margin:0 0 10px;font-size:16px;color:#cbd5e1}
+  .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .kpi{border:1px dashed #334155;border-radius:14px;padding:12px}
+  .kpi .t{font-size:12px;color:#9ca3af;margin-bottom:6px}
+  .kpi .v{font-size:20px;font-weight:700}
+  .v.good{color:var(--good)}
+  .foot{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid var(--line);color:#9ca3af;font-size:12px}
+  .taxa{color:#e5e7eb;font-weight:600}
+  @media (max-width:640px){
+    .grid{grid-template-columns:1fr}
+    .lbl,.ctl{border-top:none}
+    .lbl{padding-bottom:0}
+    .ctl{padding-top:6px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1 style="text-align: center;">Calculadora Shopee</h1>
+    <p class="hint" style="text-align: center;">Seleciona as taxas, preenche os valores e veja:
+      <strong>o preço necessário</strong> para atingir o lucro % e
+      <strong>o retorno no seu preço de venda</strong> (se informado).
+    </p>
+
+    <div class="card">
+      <div class="grid">
+        <div class="row">
+          <div class="lbl">Custo do produto (R$)</div>
+          <div class="ctl"><input id="custo" type="number" step="0.01" value="0.00"></div>
+        </div>
+
+        <div class="row">
+          <div class="lbl">Lucro desejado sobre o custo (%)</div>
+          <div class="ctl"><input id="lucro" type="number" step="0.01" value="100"></div>
+        </div>
+
+        <div class="row">
+          <div class="lbl">Taxa fixa Shopee (R$)</div>
+          <div class="ctl"><input id="taxaFixa" type="number" step="0.01" value="4.00"></div>
+        </div>
+
+        <div class="row">
+          <div class="lbl">Oferece frete grátis?
+            <span class="pill">Com frete FREE: taxa 20%</span>
+            <span class="pill">Sem frete FREE: taxa 14%</span>
+          </div>
+          <div class="ctl"><input id="freteFree" type="checkbox" checked></div>
+        </div>
+
+        <div class="row">
+          <div class="lbl">Taxa Shopee aplicada</div>
+          <div class="ctl"><span id="taxaPercent" class="taxa">20%</span></div>
+        </div>
+
+        <div class="row">
+          <div class="lbl">Preço de venda (se já definido)</div>
+          <div class="ctl"><input id="precoInformado" type="number" step="0.01" placeholder="Ex.: 15,00"></div>
+        </div>
+      </div>
+
+      <div class="result">
+        <h3>Resultados</h3>
+        <div class="kpis">
+          <div class="kpi">
+            <div class="t">Preço de venda necessário (para atingir o lucro %)</div>
+            <div class="v" id="precoNecessario">R$ 0,00</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Retorno no preço necessário</div>
+            <div class="v good" id="retornoNecessario">R$ 0,00</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Retorno no preço informado</div>
+            <div class="v good" id="retornoInformado">—</div>
+          </div>
+          <div class="kpi">
+            <div class="t">Taxa (R$) no preço informado</div>
+            <div class="v" id="taxaPrecInf">—</div>
+          </div>
+        </div>
+      </div>
+
+       
+
+	<div class="foot">
+
+  <div style="display: flex; gap: 16px; align-items: center;">
+    <span>Siga nossas redes sociais:</span>
+
+    <!-- TikTok -->
+    <a href="https://www.tiktok.com/@vianax3d" target="_blank" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: inherit;">
+      <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/500px-TikTok_logo.svg.png" alt="TikTok" style="height:20px; width:auto;">
+      <span>@VIANAX3D</span>
+    </a>
+
+    <!-- Instagram -->
+    <a href="https://www.instagram.com/vianax3d" target="_blank" style="display: flex; align-items: center; gap: 4px; text-decoration: none; color: inherit;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" style="height:20px; width:auto;">
+      <span>@VIANAX3D</span>
+    </a>
+  </div>
+</div>
+
+<script>
+(function(){
+  const el = id => document.getElementById(id);
+  const br = n => "R$ " + (isFinite(n) ? n.toFixed(2).replace(".", ",") : "0,00");
+
+  function taxaAtual(){
+    return el("freteFree").checked ? 0.20 : 0.14; // COM frete FREE = 20%
+  }
+
+  function calcular(){
+    const custo      = parseFloat(el("custo").value)      || 0;
+    const lucroPct   = parseFloat(el("lucro").value)      || 0;
+    const taxaFixa   = parseFloat(el("taxaFixa").value)   || 0;
+    const precoInf   = parseFloat(el("precoInformado").value);
+
+    const taxa = taxaAtual();
+    el("taxaPercent").textContent = (taxa*100).toFixed(0) + "%";
+
+    // Preço NECESSÁRIO a partir do lucro %
+    const numerador = (custo * (1 + lucroPct/100)) + taxaFixa;
+    const denom = (1 - taxa);
+    const precoNec = denom > 0 ? numerador / denom : 0;
+
+    // Retorno no preço NECESSÁRIO (deve bater com custo * lucro%)
+    const retornoNec = precoNec - taxaFixa - (precoNec * taxa);
+
+    // Retorno no preço INFORMADO (se fornecido)
+    let retornoInf = null, taxaReais = null;
+    if (!isNaN(precoInf)){
+      taxaReais = precoInf * taxa;
+      retornoInf = precoInf - taxaFixa - taxaReais;
+      taxaPrecInf = precoInf * taxa + taxaFixa;
+    }
+
+
+
+    // Exibir
+    el("precoNecessario").textContent   = (custo === 0.00) ? "—" : br(precoNec);
+    el("retornoNecessario").textContent = br(retornoNec);
+
+    el("retornoInformado").textContent  = (retornoInf === null) ? "—" : br(retornoInf);
+    el("taxaPrecInf").textContent       = (retornoInf === null) ? "—" : br(taxaPrecInf);
+	
+  }
+
+  // Eventos
+  ["custo","lucro","taxaFixa","precoInformado","freteFree"].forEach(id=>{
+    el(id).addEventListener("input", calcular);
+    el(id).addEventListener("change", calcular);
+  });
+
+  calcular();
+})();
+</script>
+</body>
+</html>
